@@ -1,0 +1,297 @@
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { globalStyle } from "../styles/globalStyle";
+import { Feather, FontAwesome5 } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import CheckBox from "@react-native-community/checkbox";
+import Button from "../components/CustomButton";
+
+import { books } from "../components/_dataDummy";
+
+const RentForm = ({ navigation }) => {
+  const book = books[1];
+
+  const [qty, setQty] = useState(1);
+  const [agreed, setAgreed] = useState(false);
+
+  const addQty = () => {
+    setQty(qty + 1);
+  };
+  const substractQty = () => {
+    if (qty - 1 <= 0) {
+      return;
+    } else {
+      setQty(qty - 1);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        style={{ marginBottom: 10 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View>
+          <Text style={styles.header}>Daftar buku yang akan dipinjam</Text>
+          {/* item */}
+          <View style={styles.itemContainer}>
+            <View>
+              <Image
+                source={{ uri: book.coverImg }}
+                style={styles.coverImg}
+                resizeMode="stretch"
+              />
+            </View>
+            <View
+              style={{
+                justifyContent: "space-between",
+                flex: 1,
+                paddingLeft: 15,
+              }}
+            >
+              <View>
+                <Text style={styles.title}>{book.title}</Text>
+                <Text style={styles.author}>Oleh : {book.author}</Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "flex-end",
+                }}
+              >
+                <View>
+                  <Text style={{ color: globalStyle.darkGrey }}>Jumlah</Text>
+                  <View style={{ flexDirection: "row", marginTop: 4 }}>
+                    <Feather
+                      name="minus"
+                      size={20}
+                      style={{ ...styles.qtyBtn, ...styles.qtyBtnMinus }}
+                      onPress={substractQty}
+                    />
+                    <Text style={styles.qty}>{qty}</Text>
+                    <Feather
+                      name="plus"
+                      size={20}
+                      style={{ ...styles.qtyBtn, ...styles.qtyBtnPlus }}
+                      onPress={addQty}
+                    />
+                  </View>
+                </View>
+                <View>
+                  <Feather name="trash" size={20} color={globalStyle.grey} />
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* add book */}
+          <View style={{ marginTop: 16 }}>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <FontAwesome5 name="plus" size={16} color={globalStyle.mustard} />
+              <Text style={{ color: globalStyle.mustard, marginLeft: 8 }}>
+                Tambah buku lainnya
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Date */}
+          <View style={{ marginTop: 16 }}>
+            <Text style={styles.header}>Atur Tanggal</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginTop: 10,
+              }}
+            >
+              <View style={{ flexDirection: "row" }}>
+                <Feather name="calendar" size={20} style={styles.dateIcon} />
+                <Text style={styles.date}>20 Sep 2020</Text>
+              </View>
+              <Feather
+                name="minus"
+                size={24}
+                color={globalStyle.lighGrey}
+                style={{ alignSelf: "center" }}
+              />
+              <View style={{ flexDirection: "row" }}>
+                <Feather
+                  name="calendar"
+                  size={20}
+                  style={{ ...styles.dateIcon, backgroundColor: "white" }}
+                />
+                <Text style={{ ...styles.date, backgroundColor: "white" }}>
+                  20 Sep 2020
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* detail biaya */}
+          <View style={{ marginTop: 16 }}>
+            <Text style={styles.header}>Detail Biaya</Text>
+            <View
+              style={{
+                marginTop: 10,
+                borderBottomWidth: 0.3,
+                paddingBottom: 12,
+              }}
+            >
+              <View>
+                <Text>{book.title}</Text>
+                <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
+                  {qty} pcs
+                </Text>
+                <Text style={{ position: "absolute", right: 0 }}>
+                  Rp {book.price}
+                </Text>
+              </View>
+            </View>
+
+            <View style={{ marginTop: 10 }}>
+              <Text style={{ fontWeight: "bold" }}>Total Bayar</Text>
+              <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
+                1 Buku, 3 Hari
+              </Text>
+              <Text style={{ position: "absolute", right: 0 }}>Rp 30000</Text>
+            </View>
+          </View>
+
+          {/* agreement */}
+          <View
+            style={{
+              marginTop: 20,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <CheckBox
+              disabled={false}
+              value={agreed}
+              onValueChange={(newValue) => setAgreed(newValue)}
+            />
+            <Text
+              style={{
+                textAlign: "justify",
+                fontSize: 11,
+                color: globalStyle.darkGrey,
+                flex: 1,
+                paddingLeft: 10,
+              }}
+            >
+              Dengan ini saya menyetujui untuk melakukan pengembalian sesuai
+              tanggal yang telah ditentukan. Apabila melewati tanggal tersebut,
+              saya bersedia membayar denda yang telah ditentukan.
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* button */}
+      <View>
+        <Button
+          title="Lanjutkan Peminjaman"
+          style={{
+            backgroundColor: agreed
+              ? globalStyle.mustard
+              : globalStyle.softGrey,
+          }}
+          textStyle={{ color: agreed ? "white" : globalStyle.darkGrey }}
+          onPress={() => {
+            if (agreed) {
+              navigation.navigate("ConfirmPassword");
+            }
+          }}
+        />
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    backgroundColor: "white",
+    justifyContent: "space-between",
+    paddingBottom: "5%",
+  },
+  header: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  itemContainer: {
+    flexDirection: "row",
+    marginTop: 16,
+  },
+  coverImg: {
+    width: 84,
+    height: 120,
+    borderRadius: 10,
+  },
+  title: {
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  author: {
+    color: globalStyle.darkGrey,
+    marginTop: 3,
+  },
+  qtyBtn: {
+    borderWidth: 0.5,
+    borderColor: globalStyle.grey,
+    padding: 4,
+    color: globalStyle.darkGrey,
+  },
+  qtyBtnPlus: {
+    borderTopRightRadius: 3,
+    borderBottomRightRadius: 3,
+  },
+  qtyBtnMinus: {
+    borderTopLeftRadius: 3,
+    borderBottomLeftRadius: 3,
+  },
+  qty: {
+    paddingHorizontal: 14,
+    borderTopColor: globalStyle.grey,
+    borderBottomColor: globalStyle.grey,
+    fontSize: 16,
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
+    textAlignVertical: "center",
+  },
+  dateIcon: {
+    backgroundColor: globalStyle.softGrey,
+    color: globalStyle.darkGrey,
+    padding: 6,
+    borderColor: globalStyle.lighGrey,
+    borderWidth: 0.5,
+    borderTopLeftRadius: 6,
+    borderBottomLeftRadius: 6,
+  },
+  date: {
+    color: globalStyle.darkGrey,
+    borderWidth: 0.5,
+    borderLeftWidth: 0,
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 6,
+    borderColor: globalStyle.lighGrey,
+    paddingVertical: 7,
+    backgroundColor: globalStyle.softGrey,
+    paddingLeft: 14,
+    paddingRight: 32,
+  },
+});
+
+export default RentForm;

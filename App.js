@@ -1,21 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StyleSheet, View, Platform, StatusBar } from "react-native";
+import { globalStyle } from "./styles/globalStyle";
+import { UserProvider } from "./context/userContext";
+import { BookProvider } from "./context/bookContext";
+
+import MainApp from "./routes/rootStack";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <StatusBar
+        barStyle="light-content-content"
+        hidden={false}
+        backgroundColor={globalStyle.darkGrey}
+      />
+      <View style={styles.container}>
+        <UserProvider>
+          <BookProvider>
+            <MainApp />
+          </BookProvider>
+        </UserProvider>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: globalStyle.white,
   },
 });

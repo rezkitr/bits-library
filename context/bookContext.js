@@ -1,0 +1,59 @@
+import React, { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-community/async-storage";
+import { bitsLibApi } from "../api/bitsLibApi";
+
+const BookContext = React.createContext();
+
+export const BookProvider = ({ children }) => {
+  const [books, setBooks] = useState([]);
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    getBookList();
+  }, [token]);
+
+  const getToken = async () => {
+    const token = await AsyncStorage.getItem("token");
+    setToken(token);
+  };
+
+  const getBookList = async () => {
+    try {
+      await getToken();
+      const response = await bitsLibApi.get("/book/index", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.status) {
+        setBooks(response.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getPopularBooks = () => {
+    getBookList();
+  };
+
+  const getLatestBook = () => {
+    getBookList();
+  };
+
+  return (
+    <BookContext.Provider
+      value={{
+        books: books,
+        getBookList: getBookList,
+        getPopularBooks: getPopularBooks,
+        getLatestBook: getLatestBook,
+      }}
+    >
+      {children}
+    </BookContext.Provider>
+  );
+};
+
+export default BookContext;
