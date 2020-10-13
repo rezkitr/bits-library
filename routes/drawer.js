@@ -38,18 +38,20 @@ function DrawerNavigation() {
       }}
     >
       <Drawer.Screen
-        name="Home"
-        component={HomeStack}
+        name="HomeStack"
         options={{
           title: "Beranda",
           drawerLabel: "Beranda",
           drawerIcon: () => (
             <Feather name="home" size={24} color={globalStyle.darkGrey} />
           ),
+          swipeEnabled: false,
         }}
-      />
+      >
+        {(props) => <HomeStack {...props} />}
+      </Drawer.Screen>
       <Drawer.Screen
-        name="Rent"
+        name="RentStack"
         component={RentStack}
         options={{
           title: "Daftar Pinjaman",
@@ -57,10 +59,11 @@ function DrawerNavigation() {
           drawerIcon: () => (
             <Feather name="book-open" size={24} color={globalStyle.darkGrey} />
           ),
+          swipeEnabled: false,
         }}
       />
       <Drawer.Screen
-        name="Account"
+        name="AccountStack"
         component={AccountStack}
         options={{
           title: "Pengaturan Akun",
@@ -68,6 +71,7 @@ function DrawerNavigation() {
           drawerIcon: () => (
             <Feather name="settings" size={24} color={globalStyle.darkGrey} />
           ),
+          swipeEnabled: false,
         }}
       />
     </Drawer.Navigator>

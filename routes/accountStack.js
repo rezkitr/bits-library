@@ -5,7 +5,6 @@ import Header from "../components/CustomHeader";
 
 import AccountSetting from "../screens/AccountSetting";
 import ConfirmPassword from "../screens/ConfirmPassword";
-import Home from "./homeStack";
 
 const Stack = createStackNavigator();
 
@@ -49,22 +48,6 @@ function AccountSettingStack() {
           };
         }}
       />
-      {/* <Stack.Screen
-        name="Home"
-        component={Home}
-        options={({ navigation }) => {
-          return {
-            header: () => (
-              <Header
-                title="Bits Library"
-                iconName="menu"
-                navigation={navigation}
-                type="menu"
-              />
-            ),
-          };
-        }}
-      /> */}
     </Stack.Navigator>
   );
 }

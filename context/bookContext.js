@@ -30,7 +30,7 @@ export const BookProvider = ({ children }) => {
         setBooks(response.data.data);
       }
     } catch (error) {
-      console.log(error);
+      console.log("no token yet");
     }
   };
 

@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 
 import Carousel from "../components/Carousel";
 import SectionHeader from "../components/SectionHeader";
 import BookListHome from "../components/BookListHome";
+import Alert from "../components/Alert";
 
-const Home = ({ navigation }) => {
+const Home = ({ navigation, route, rootProps }) => {
   return (
     <>
+      {rootProps.route.params && rootProps.route.params.updateAccount ? (
+        <Alert text="Perubahan berhasil disimpan" color="#72B3F3" />
+      ) : null}
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ backgroundColor: "white" }}

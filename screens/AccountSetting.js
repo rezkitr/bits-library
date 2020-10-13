@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -10,7 +10,6 @@ import {
   ScrollView,
   YellowBox,
 } from "react-native";
-import { CommonActions } from "@react-navigation/native";
 import { globalStyle } from "../styles/globalStyle";
 import UserContext from "../context/userContext";
 import { Formik } from "formik";
@@ -24,18 +23,6 @@ const AccountSetting = ({ navigation }) => {
     "Non-serializable values were found in the navigation state",
   ]);
   const value = useContext(UserContext);
-
-  useEffect(() => {
-    navigation.addListener("focus", () => {
-      // navigation.dispatch(
-      console.log("focuss");
-      //   CommonActions.reset({
-      //     index: 0,
-      //     routes: [{ name: "AccountSetting" }],
-      //   })
-      // );
-    });
-  }, [navigation]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

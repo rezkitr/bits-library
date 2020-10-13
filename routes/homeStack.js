@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import Header from "../components/CustomHeader";
@@ -13,12 +13,12 @@ import RentDetail from "../screens/RentDetail";
 
 const Stack = createStackNavigator();
 
-function HomeStack() {
+function HomeStack(props) {
+  let rootProps = props;
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
         name="Home"
-        component={Home}
         options={({ navigation }) => {
           return {
             header: () => (
@@ -31,7 +31,11 @@ function HomeStack() {
             ),
           };
         }}
-      />
+      >
+        {(props) => {
+          return <Home {...props} rootProps={rootProps} />;
+        }}
+      </Stack.Screen>
       <Stack.Screen
         name="MainBookList"
         component={MainBookList}
