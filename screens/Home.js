@@ -7,12 +7,13 @@ import BookListHome from "../components/BookListHome";
 import Alert from "../components/Alert";
 
 const Home = ({ navigation, route, rootProps }) => {
+  console.log(rootProps.route.params.updateAccount);
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
       rootProps.route.params.updateAccount = false;
     });
     return unsubscribe;
-  }, [navigation]);
+  });
 
   return (
     <>
