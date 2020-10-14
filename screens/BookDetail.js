@@ -21,7 +21,10 @@ const BookDetail = ({ route, navigation }) => {
       />
       <TabMenuDetail itemData={route.params.itemData} />
 
-      <InfoStockFooter navigation={navigation} />
+      <InfoStockFooter
+        navigation={navigation}
+        itemData={route.params.itemData}
+      />
     </View>
   );
 };

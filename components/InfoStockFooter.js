@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { globalStyle } from "../styles/globalStyle";
 
+import BookCartContext from "../context/bookCartContext";
+
 import Button from "./CustomButton";
 
-const InfoStockFooter = ({ navigation }) => {
+const InfoStockFooter = ({ navigation, itemData }) => {
+  const value = useContext(BookCartContext);
+
   return (
     <View style={styles.container}>
       <View>
@@ -18,7 +22,10 @@ const InfoStockFooter = ({ navigation }) => {
       </View>
       <View style={{ alignSelf: "center" }}>
         <Button
-          onPress={() => navigation.navigate("RentForm")}
+          onPress={() => {
+            value.addBook(itemData);
+            navigation.navigate("RentForm");
+          }}
           title="Pinjam Buku"
           style={{
             backgroundColor: globalStyle.mustard,

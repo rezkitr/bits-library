@@ -1,8 +1,9 @@
 import React from "react";
-import { StyleSheet, View, Platform, StatusBar } from "react-native";
+import { StyleSheet, View, StatusBar } from "react-native";
 import { globalStyle } from "./styles/globalStyle";
 import { UserProvider } from "./context/userContext";
 import { BookProvider } from "./context/bookContext";
+import { BookCartProvider } from "./context/bookCartContext";
 
 import MainApp from "./routes/rootStack";
 
@@ -17,7 +18,9 @@ export default function App() {
       <View style={styles.container}>
         <UserProvider>
           <BookProvider>
-            <MainApp />
+            <BookCartProvider>
+              <MainApp />
+            </BookCartProvider>
           </BookProvider>
         </UserProvider>
       </View>

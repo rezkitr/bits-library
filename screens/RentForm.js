@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -12,14 +12,23 @@ import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import CheckBox from "@react-native-community/checkbox";
 import Button from "../components/CustomButton";
+import BookCartContext from "../context/bookCartContext";
 
 import { books } from "../components/_dataDummy";
 
 const RentForm = ({ navigation }) => {
+  // console.log(new Date().toISOString().split("T")[0]);
+  const value = useContext(BookCartContext);
+  // console.log("_____________________");
+  console.log(value.bookCart);
+  // console.log(value.bookCart.length);
+
   const book = books[1];
 
   const [qty, setQty] = useState(1);
   const [agreed, setAgreed] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [date, setDate] = useState(new Date());
 
   const addQty = () => {
     setQty(qty + 1);
@@ -30,6 +39,12 @@ const RentForm = ({ navigation }) => {
     } else {
       setQty(qty - 1);
     }
+  };
+
+  const onDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setDate(currentDate);
+    setShowDatePicker(false);
   };
 
   return (
@@ -124,16 +139,27 @@ const RentForm = ({ navigation }) => {
                 color={globalStyle.lighGrey}
                 style={{ alignSelf: "center" }}
               />
-              <View style={{ flexDirection: "row" }}>
-                <Feather
-                  name="calendar"
-                  size={20}
-                  style={{ ...styles.dateIcon, backgroundColor: "white" }}
-                />
-                <Text style={{ ...styles.date, backgroundColor: "white" }}>
-                  20 Sep 2020
-                </Text>
-              </View>
+              <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                <View style={{ flexDirection: "row" }}>
+                  <Feather
+                    name="calendar"
+                    size={20}
+                    style={{ ...styles.dateIcon, backgroundColor: "white" }}
+                  />
+                  <Text style={{ ...styles.date, backgroundColor: "white" }}>
+                    20 Sep 2020
+                  </Text>
+                  {showDatePicker && (
+                    <DateTimePicker
+                      testID="endDate"
+                      value={new Date(new Date().toISOString().split("T")[0])}
+                      mode="date"
+                      minimumDate={new Date().setDate(new Date().getDate() + 1)}
+                      onChange={onDateChange}
+                    />
+                  )}
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
 
