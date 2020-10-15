@@ -33,7 +33,7 @@ const BookCard = ({
             style={{ ...styles.coverImg, ...coverImgStyle }}
             source={{
               uri:
-                "https://images-na.ssl-images-amazon.com/images/I/71AjRa1kkOL.jpg",
+                "https://i.pinimg.com/564x/17/fe/4d/17fe4dcf3546a5804efa04b3f7879dc4.jpg",
             }}
             resizeMode="stretch"
           />

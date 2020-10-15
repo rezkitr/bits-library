@@ -4,6 +4,7 @@ import {
   View,
   Text,
   Image,
+  FlatList,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
@@ -11,31 +12,19 @@ import { globalStyle } from "../styles/globalStyle";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import CheckBox from "@react-native-community/checkbox";
-import Button from "../components/CustomButton";
 import BookCartContext from "../context/bookCartContext";
 
+import Button from "../components/CustomButton";
+import BookItem from "../components/BookItem";
 import { books } from "../components/_dataDummy";
 
 const RentForm = ({ navigation }) => {
   const value = useContext(BookCartContext);
-
   const book = books[1];
 
-  const [qty, setQty] = useState(1);
   const [agreed, setAgreed] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [date, setDate] = useState(new Date());
-
-  const addQty = () => {
-    setQty(qty + 1);
-  };
-  const substractQty = () => {
-    if (qty - 1 <= 0) {
-      return;
-    } else {
-      setQty(qty - 1);
-    }
-  };
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -51,56 +40,16 @@ const RentForm = ({ navigation }) => {
       >
         <View>
           <Text style={styles.header}>Daftar buku yang akan dipinjam</Text>
+
           {/* item */}
-          <View style={styles.itemContainer}>
-            <View>
-              <Image
-                source={{ uri: book.coverImg }}
-                style={styles.coverImg}
-                resizeMode="stretch"
-              />
-            </View>
-            <View
-              style={{
-                justifyContent: "space-between",
-                flex: 1,
-                paddingLeft: 15,
+          <View style={{ marginTop: 15 }}>
+            <FlatList
+              data={value.bookCart}
+              keyExtractor={(item) => item.book.id.toString()}
+              renderItem={({ item }) => {
+                return <BookItem item={item} />;
               }}
-            >
-              <View>
-                <Text style={styles.title}>{book.title}</Text>
-                <Text style={styles.author}>Oleh : {book.author}</Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "flex-end",
-                }}
-              >
-                <View>
-                  <Text style={{ color: globalStyle.darkGrey }}>Jumlah</Text>
-                  <View style={{ flexDirection: "row", marginTop: 4 }}>
-                    <Feather
-                      name="minus"
-                      size={20}
-                      style={{ ...styles.qtyBtn, ...styles.qtyBtnMinus }}
-                      onPress={substractQty}
-                    />
-                    <Text style={styles.qty}>{qty}</Text>
-                    <Feather
-                      name="plus"
-                      size={20}
-                      style={{ ...styles.qtyBtn, ...styles.qtyBtnPlus }}
-                      onPress={addQty}
-                    />
-                  </View>
-                </View>
-                <View>
-                  <Feather name="trash" size={20} color={globalStyle.grey} />
-                </View>
-              </View>
-            </View>
+            />
           </View>
 
           {/* add book */}
@@ -172,7 +121,7 @@ const RentForm = ({ navigation }) => {
               <View>
                 <Text>{book.title}</Text>
                 <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                  {qty} pcs
+                  1 pcs
                 </Text>
                 <Text style={{ position: "absolute", right: 0 }}>
                   Rp {book.price}
@@ -244,7 +193,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 24,
+
     backgroundColor: "white",
     justifyContent: "space-between",
     paddingBottom: "5%",
@@ -252,47 +201,9 @@ const styles = StyleSheet.create({
   header: {
     fontWeight: "bold",
     fontSize: 16,
+    paddingTop: 24,
   },
-  itemContainer: {
-    flexDirection: "row",
-    marginTop: 16,
-  },
-  coverImg: {
-    width: 84,
-    height: 120,
-    borderRadius: 10,
-  },
-  title: {
-    fontWeight: "bold",
-    fontSize: 14,
-  },
-  author: {
-    color: globalStyle.darkGrey,
-    marginTop: 3,
-  },
-  qtyBtn: {
-    borderWidth: 0.5,
-    borderColor: globalStyle.grey,
-    padding: 4,
-    color: globalStyle.darkGrey,
-  },
-  qtyBtnPlus: {
-    borderTopRightRadius: 3,
-    borderBottomRightRadius: 3,
-  },
-  qtyBtnMinus: {
-    borderTopLeftRadius: 3,
-    borderBottomLeftRadius: 3,
-  },
-  qty: {
-    paddingHorizontal: 14,
-    borderTopColor: globalStyle.grey,
-    borderBottomColor: globalStyle.grey,
-    fontSize: 16,
-    borderTopWidth: 0.5,
-    borderBottomWidth: 0.5,
-    textAlignVertical: "center",
-  },
+
   dateIcon: {
     backgroundColor: globalStyle.softGrey,
     color: globalStyle.darkGrey,
