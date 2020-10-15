@@ -1,10 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
   Text,
-  Image,
-  FlatList,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
@@ -13,6 +11,7 @@ import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import CheckBox from "@react-native-community/checkbox";
 import BookCartContext from "../context/bookCartContext";
+import { dateFormatter } from "../helperFunction/dateFormatter";
 
 import Button from "../components/CustomButton";
 import BookItem from "../components/BookItem";
@@ -21,15 +20,27 @@ import { books } from "../components/_dataDummy";
 const RentForm = ({ navigation }) => {
   const value = useContext(BookCartContext);
   const book = books[1];
+  const d = new Date();
+  const nextDay = new Date(d);
+  nextDay.setDate(d.getDate() + 1);
 
   const [agreed, setAgreed] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [endDate, setEndDate] = useState(nextDay.toISOString().split("T")[0]);
+
+  useEffect(() => {
+    if (!value.bookCart.length) {
+      navigation.popToTop();
+    }
+    setShowDatePicker(false);
+  });
 
   const onDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setDate(currentDate);
-    setShowDatePicker(false);
+    let endDate = new Date(selectedDate).toISOString().split("T")[0];
+    setEndDate(endDate);
   };
 
   return (
@@ -43,19 +54,16 @@ const RentForm = ({ navigation }) => {
 
           {/* item */}
           <View style={{ marginTop: 15 }}>
-            <FlatList
-              data={value.bookCart}
-              keyExtractor={(item) => item.book.id.toString()}
-              renderItem={({ item }) => {
-                return <BookItem item={item} />;
-              }}
-            />
+            {value.bookCart.map((item) => {
+              return <BookItem key={item.book.id} item={item} />;
+            })}
           </View>
 
           {/* add book */}
           <View style={{ marginTop: 16 }}>
             <TouchableOpacity
               style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() => navigation.navigate("MainBookList")}
             >
               <FontAwesome5 name="plus" size={16} color={globalStyle.mustard} />
               <Text style={{ color: globalStyle.mustard, marginLeft: 8 }}>
@@ -76,7 +84,9 @@ const RentForm = ({ navigation }) => {
             >
               <View style={{ flexDirection: "row" }}>
                 <Feather name="calendar" size={20} style={styles.dateIcon} />
-                <Text style={styles.date}>20 Sep 2020</Text>
+                <Text style={styles.date}>
+                  {dateFormatter(startDate, false)}
+                </Text>
               </View>
               <Feather
                 name="minus"
@@ -92,12 +102,12 @@ const RentForm = ({ navigation }) => {
                     style={{ ...styles.dateIcon, backgroundColor: "white" }}
                   />
                   <Text style={{ ...styles.date, backgroundColor: "white" }}>
-                    20 Sep 2020
+                    {dateFormatter(endDate, false)}
                   </Text>
                   {showDatePicker && (
                     <DateTimePicker
                       testID="endDate"
-                      value={new Date(new Date().toISOString().split("T")[0])}
+                      value={new Date(endDate)}
                       mode="date"
                       minimumDate={new Date().setDate(new Date().getDate() + 1)}
                       onChange={onDateChange}
