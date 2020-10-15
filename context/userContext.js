@@ -14,13 +14,21 @@ export const UserProvider = ({ children }) => {
         email,
         password,
       });
-      await AsyncStorage.setItem("token", response.data.apikey_account);
-      await getUser(response.data.usr_id, response.data.apikey_account);
-      setloginStatus(response.data);
-      // console.log(user);
+
+      if (response.data.status) {
+        await AsyncStorage.setItem("token", response.data.apikey_account);
+        await getUser(response.data.usr_id, response.data.apikey_account);
+        setloginStatus(response.data);
+      } else {
+        setloginStatus(response.data);
+      }
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+  const onRetryLogin = async () => {
+    setloginStatus(null);
   };
 
   const onLogout = async () => {
@@ -100,6 +108,7 @@ export const UserProvider = ({ children }) => {
         loginStatus: loginStatus,
         user: user,
         onLogin: onLogin,
+        onRetryLogin: onRetryLogin,
         onLogout: onLogout,
         updateUser: updateUser,
         onConfirm: onConfirm,

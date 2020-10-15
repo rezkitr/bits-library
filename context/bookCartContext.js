@@ -37,8 +37,6 @@ export const BookCartProvider = ({ children }) => {
 
   const addBook = (book) => {
     dispatch({ type: "ADD_BOOK", payload: book });
-    // console.log("****************");
-    // console.log(state);
   };
 
   return (

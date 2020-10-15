@@ -17,11 +17,7 @@ import BookCartContext from "../context/bookCartContext";
 import { books } from "../components/_dataDummy";
 
 const RentForm = ({ navigation }) => {
-  // console.log(new Date().toISOString().split("T")[0]);
   const value = useContext(BookCartContext);
-  // console.log("_____________________");
-  console.log(value.bookCart);
-  // console.log(value.bookCart.length);
 
   const book = books[1];
 

@@ -14,6 +14,7 @@ import { globalStyle } from "../styles/globalStyle";
 import UserContext from "../context/userContext";
 
 import Button from "../components/CustomButton";
+import Alert from "../components/Alert";
 
 const Login = ({ navigation }) => {
   let [fontsLoaded] = useFonts({ Cookie_400Regular });
@@ -28,43 +29,49 @@ const Login = ({ navigation }) => {
   } else {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <Text style={styles.brand}>bits library</Text>
+        <View style={{ flex: 1 }}>
+          {value.loginStatus && !value.loginStatus.status ? (
+            <Alert text={value.loginStatus.message} color="#F65C5C" />
+          ) : null}
+          <View style={styles.container}>
+            <Text style={styles.brand}>bits library</Text>
 
-          <View style={styles.formContainer}>
-            <TextInput
-              autoCompleteType="off"
-              style={styles.textInput}
-              autoCapitalize="none"
-              autoCorrect={false}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <TextInput
-              secureTextEntry
-              style={styles.textInput}
-              autoCapitalize="none"
-              autoCorrect={false}
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-            />
+            <View style={styles.formContainer}>
+              <TextInput
+                autoCompleteType="off"
+                style={styles.textInput}
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+              />
+              <TextInput
+                secureTextEntry
+                style={styles.textInput}
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
+              />
 
-            <TouchableOpacity>
-              <Text style={styles.pwdForget}>Lupa Kata Sandi?</Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity>
+                <Text style={styles.pwdForget}>Lupa Kata Sandi?</Text>
+              </TouchableOpacity>
+            </View>
 
-          <View style={{ width: "70%" }}>
-            <Button
-              title="Masuk"
-              color={globalStyle.grey}
-              onPress={() => {
-                value.onLogin(email, password);
-              }}
-              style={{ backgroundColor: globalStyle.mustard }}
-            />
+            <View style={{ width: "70%" }}>
+              <Button
+                title="Masuk"
+                color={globalStyle.grey}
+                onPress={() => {
+                  value.onLogin(email, password);
+                  value.onRetryLogin();
+                }}
+                style={{ backgroundColor: globalStyle.mustard }}
+              />
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
