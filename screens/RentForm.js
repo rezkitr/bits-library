@@ -37,6 +37,9 @@ const RentForm = ({ navigation }) => {
     if (!value.bookCart.length) {
       navigation.popToTop();
     }
+  }, [value.bookCart.length]);
+
+  useEffect(() => {
     setShowDatePicker(false);
     getTotal();
   });
