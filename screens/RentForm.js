@@ -12,6 +12,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import CheckBox from "@react-native-community/checkbox";
 import BookCartContext from "../context/bookCartContext";
 import { dateFormatter } from "../helperFunction/dateFormatter";
+import { priceFormatter } from "../helperFunction/priceFormatter";
 
 import Button from "../components/CustomButton";
 import BookItem from "../components/BookItem";
@@ -30,17 +31,38 @@ const RentForm = ({ navigation }) => {
     new Date().toISOString().split("T")[0]
   );
   const [endDate, setEndDate] = useState(nextDay.toISOString().split("T")[0]);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     if (!value.bookCart.length) {
       navigation.popToTop();
     }
     setShowDatePicker(false);
+    getTotal();
   });
 
   const onDateChange = (event, selectedDate) => {
     let endDate = new Date(selectedDate).toISOString().split("T")[0];
     setEndDate(endDate);
+  };
+
+  const getRentDuration = () => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const timeDiff = end.getTime() - start.getTime();
+    const dayDiff = timeDiff / (1000 * 3600 * 24);
+
+    return dayDiff;
+  };
+
+  const getTotal = () => {
+    let total = 0;
+
+    for (const item of value.bookCart) {
+      total = total + item.book.price * item.qty;
+    }
+    setTotal(total);
   };
 
   return (
@@ -73,7 +95,7 @@ const RentForm = ({ navigation }) => {
           </View>
 
           {/* Date */}
-          <View style={{ marginTop: 16 }}>
+          <View style={{ marginTop: 8 }}>
             <Text style={styles.header}>Atur Tanggal</Text>
             <View
               style={{
@@ -125,26 +147,32 @@ const RentForm = ({ navigation }) => {
               style={{
                 marginTop: 10,
                 borderBottomWidth: 0.3,
-                paddingBottom: 12,
+                paddingBottom: 5,
               }}
             >
-              <View>
-                <Text>{book.title}</Text>
-                <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                  1 pcs
-                </Text>
-                <Text style={{ position: "absolute", right: 0 }}>
-                  Rp {book.price}
-                </Text>
-              </View>
+              {value.bookCart.map((item) => {
+                return (
+                  <View key={item.book.id} style={{ marginBottom: 6 }}>
+                    <Text>{item.book.name}</Text>
+                    <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
+                      {item.qty} pcs
+                    </Text>
+                    <Text style={{ position: "absolute", right: 0 }}>
+                      Rp {priceFormatter(item.book.price * item.qty)}
+                    </Text>
+                  </View>
+                );
+              })}
             </View>
 
             <View style={{ marginTop: 10 }}>
               <Text style={{ fontWeight: "bold" }}>Total Bayar</Text>
               <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                1 Buku, 3 Hari
+                {`${value.bookCart.length} Buku, ${getRentDuration()} Hari`}
               </Text>
-              <Text style={{ position: "absolute", right: 0 }}>Rp 30000</Text>
+              <Text style={{ position: "absolute", right: 0 }}>
+                Rp {priceFormatter(total)}
+              </Text>
             </View>
           </View>
 
