@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import Header from "../components/CustomHeader";
@@ -124,6 +124,7 @@ function HomeStack(props) {
                 navigation={navigation}
                 type="back"
                 search={false}
+                navTo="Home"
               />
             ),
           };
