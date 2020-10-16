@@ -18,8 +18,9 @@ import RentContext from "../context/rentContext";
 
 import Button from "../components/CustomButton";
 import BookItem from "../components/BookItem";
+import Alert from "../components/Alert";
 
-const RentForm = ({ navigation }) => {
+const RentForm = ({ navigation, route }) => {
   LogBox.ignoreLogs([
     "Non-serializable values were found in the navigation state",
   ]);
@@ -75,10 +76,12 @@ const RentForm = ({ navigation }) => {
 
   const toConfirm = async (data) => {
     try {
-      const status = await createRent(data);
-      console.log(status);
+      const { status, message } = await createRent(data);
+
       if (status) {
         navigation.replace("SuccessMessage");
+      } else {
+        navigation.navigate("RentForm", { flag: true, message });
       }
     } catch (error) {
       console.log(error);
@@ -101,6 +104,9 @@ const RentForm = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {route.params && route.params.flag ? (
+        <Alert text={route.params.message} color="#F65C5C" />
+      ) : null}
       <ScrollView
         style={{ marginBottom: 10 }}
         showsVerticalScrollIndicator={false}
