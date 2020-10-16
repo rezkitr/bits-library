@@ -6,9 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   LogBox,
-  BackHandler,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
 import { globalStyle } from "../styles/globalStyle";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -51,12 +49,6 @@ const RentForm = ({ navigation }) => {
     getTotal();
   });
 
-  useFocusEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", function () {
-      return true;
-    });
-  }, []);
-
   const onDateChange = (event, selectedDate) => {
     let endDate = new Date(selectedDate).toISOString().split("T")[0];
     setEndDate(endDate);
@@ -82,9 +74,14 @@ const RentForm = ({ navigation }) => {
   };
 
   const toConfirm = async (data) => {
-    const { status } = await createRent(data);
-    if (status) {
-      navigation.replace("SuccessMessage");
+    try {
+      const status = await createRent(data);
+      console.log(status);
+      if (status) {
+        navigation.replace("SuccessMessage");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 

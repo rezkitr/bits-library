@@ -1,11 +1,22 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { StyleSheet, View, Text, BackHandler } from "react-native";
 import { globalStyle } from "../styles/globalStyle";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 import Button from "../components/CustomButton";
 
 const SuccessMessage = ({ navigation }) => {
+  useFocusEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", function () {
+      return true;
+    });
+
+    return BackHandler.removeEventListener("hardwareBackPress", function () {
+      return true;
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <View
