@@ -42,16 +42,11 @@ const ConfirmPassword = ({ navigation, route }) => {
               setLoading(true);
               try {
                 if (await value.onConfirm(value.user.email, values.password)) {
-                  await route.params.action(value.user.id, route.params.data);
-                  setFalsePassword(true);
-                  navigation.popToTop();
-                  navigation.navigate("HomeStack", {
-                    screen: "Home",
-                    updateAccount: true,
-                  });
+                  await route.params.action(route.params.data);
+                  setFalsePassword(false);
                 } else {
                   setLoading(false);
-                  setFalsePassword(false);
+                  setFalsePassword(true);
                 }
               } catch (error) {
                 console.log(error);

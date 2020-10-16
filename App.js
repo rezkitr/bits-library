@@ -4,6 +4,7 @@ import { globalStyle } from "./styles/globalStyle";
 import { UserProvider } from "./context/userContext";
 import { BookProvider } from "./context/bookContext";
 import { BookCartProvider } from "./context/bookCartContext";
+import { RentProvider } from "./context/rentContext";
 
 import MainApp from "./routes/rootStack";
 
@@ -19,7 +20,9 @@ export default function App() {
         <UserProvider>
           <BookProvider>
             <BookCartProvider>
-              <MainApp />
+              <RentProvider>
+                <MainApp />
+              </RentProvider>
             </BookCartProvider>
           </BookProvider>
         </UserProvider>

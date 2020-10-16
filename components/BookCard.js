@@ -3,8 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { globalStyle } from "../styles/globalStyle";
 import { nameShortener } from "../helperFunction/nameShortener";
 import { titleShortener } from "../helperFunction/titleShortener";
-
-import PriceTag from "./PriceTag";
+import { priceFormatter } from "../helperFunction/priceFormatter";
 
 const BookCard = ({
   completeInfo,
@@ -13,8 +12,8 @@ const BookCard = ({
   containerStyle,
   coverImgStyle,
   titleStyle,
-  authorStyle,
   priceStyle,
+  authorStyle,
   navigation,
 }) => {
   return (
@@ -45,10 +44,9 @@ const BookCard = ({
               {completeInfo ? item.author : nameShortener(item.author)}
             </Text>
           </View>
-          <PriceTag
-            price={item.price}
-            style={{ ...styles.price, ...priceStyle }}
-          />
+          <Text style={{ ...styles.price, ...priceStyle }}>
+            Rp {priceFormatter(item.price)}
+          </Text>
         </View>
       </TouchableOpacity>
     </>

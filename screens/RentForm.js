@@ -5,22 +5,29 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  LogBox,
+  BackHandler,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { globalStyle } from "../styles/globalStyle";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import CheckBox from "@react-native-community/checkbox";
-import BookCartContext from "../context/bookCartContext";
 import { dateFormatter } from "../helperFunction/dateFormatter";
 import { priceFormatter } from "../helperFunction/priceFormatter";
+import BookCartContext from "../context/bookCartContext";
+import RentContext from "../context/rentContext";
 
 import Button from "../components/CustomButton";
 import BookItem from "../components/BookItem";
-import { books } from "../components/_dataDummy";
 
 const RentForm = ({ navigation }) => {
-  const value = useContext(BookCartContext);
-  const book = books[1];
+  LogBox.ignoreLogs([
+    "Non-serializable values were found in the navigation state",
+  ]);
+
+  const { bookCart } = useContext(BookCartContext);
+  const { createRent } = useContext(RentContext);
   const d = new Date();
   const nextDay = new Date(d);
   nextDay.setDate(d.getDate() + 1);
@@ -34,15 +41,21 @@ const RentForm = ({ navigation }) => {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    if (!value.bookCart.length) {
+    if (!bookCart.length) {
       navigation.popToTop();
     }
-  }, [value.bookCart.length]);
+  }, [bookCart.length]);
 
   useEffect(() => {
     setShowDatePicker(false);
     getTotal();
   });
+
+  useFocusEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", function () {
+      return true;
+    });
+  }, []);
 
   const onDateChange = (event, selectedDate) => {
     let endDate = new Date(selectedDate).toISOString().split("T")[0];
@@ -62,10 +75,31 @@ const RentForm = ({ navigation }) => {
   const getTotal = () => {
     let total = 0;
 
-    for (const item of value.bookCart) {
+    for (const item of bookCart) {
       total = total + item.book.price * item.qty;
     }
     setTotal(total);
+  };
+
+  const toConfirm = async (data) => {
+    const { status } = await createRent(data);
+    if (status) {
+      navigation.replace("SuccessMessage");
+    }
+  };
+
+  const onSubmit = () => {
+    if (agreed) {
+      navigation.navigate("ConfirmPassword", {
+        title: "Proses Peminjaman",
+        action: toConfirm,
+        data: {
+          startDate,
+          endDate,
+          total,
+        },
+      });
+    }
   };
 
   return (
@@ -79,7 +113,7 @@ const RentForm = ({ navigation }) => {
 
           {/* item */}
           <View style={{ marginTop: 15 }}>
-            {value.bookCart.map((item) => {
+            {bookCart.map((item) => {
               return <BookItem key={item.book.id} item={item} />;
             })}
           </View>
@@ -153,7 +187,7 @@ const RentForm = ({ navigation }) => {
                 paddingBottom: 5,
               }}
             >
-              {value.bookCart.map((item) => {
+              {bookCart.map((item) => {
                 return (
                   <View key={item.book.id} style={{ marginBottom: 6 }}>
                     <Text>{item.book.name}</Text>
@@ -171,7 +205,7 @@ const RentForm = ({ navigation }) => {
             <View style={{ marginTop: 10 }}>
               <Text style={{ fontWeight: "bold" }}>Total Bayar</Text>
               <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                {`${value.bookCart.length} Buku, ${getRentDuration()} Hari`}
+                {`${bookCart.length} Buku, ${getRentDuration()} Hari`}
               </Text>
               <Text style={{ position: "absolute", right: 0 }}>
                 Rp {priceFormatter(total)}
@@ -219,11 +253,7 @@ const RentForm = ({ navigation }) => {
               : globalStyle.softGrey,
           }}
           textStyle={{ color: agreed ? "white" : globalStyle.darkGrey }}
-          onPress={() => {
-            if (agreed) {
-              navigation.navigate("ConfirmPassword");
-            }
-          }}
+          onPress={onSubmit}
         />
       </View>
     </View>

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, View, Text, Dimensions } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { DrawerItem, DrawerItemList } from "@react-navigation/drawer";
 import { globalStyle } from "../styles/globalStyle";
 import { Feather } from "@expo/vector-icons";
@@ -7,24 +7,23 @@ import UserContext from "../context/userContext";
 
 import ProfileNameTag from "./ProfileNameTag";
 
-const user = {
-  name: "Salsabila Savira",
-  email: "salsabila@gmail.com",
-};
-
 const DrawerContent = (props) => {
   const value = useContext(UserContext);
 
   return (
     <View style={{ flex: 1, paddingBottom: 12 }}>
       <View style={styles.headContainer}>
-        <View style={styles.head}>
-          <ProfileNameTag size={64} />
-          <View style={{ marginLeft: 14 }}>
-            <Text style={styles.name}>{value.user.name}</Text>
-            <Text style={styles.email}>{value.user.email}</Text>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("AccountStack")}
+        >
+          <View style={styles.head}>
+            <ProfileNameTag size={64} />
+            <View style={{ marginLeft: 14 }}>
+              <Text style={styles.name}>{value.user.name}</Text>
+              <Text style={styles.email}>{value.user.email}</Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
 
       <View style={{ flex: 1, justifyContent: "space-between" }}>

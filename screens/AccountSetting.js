@@ -8,7 +8,7 @@ import {
   Keyboard,
   TextInput,
   ScrollView,
-  YellowBox,
+  LogBox,
 } from "react-native";
 import { globalStyle } from "../styles/globalStyle";
 import UserContext from "../context/userContext";
@@ -19,19 +19,29 @@ import Button from "../components/CustomButton";
 import ProfileNameTag from "../components/ProfileNameTag";
 
 const AccountSetting = ({ navigation }) => {
-  YellowBox.ignoreWarnings([
+  LogBox.ignoreLogs([
     "Non-serializable values were found in the navigation state",
   ]);
-  const value = useContext(UserContext);
+
+  const { user, updateUser } = useContext(UserContext);
+
+  const toConfirm = async (data) => {
+    await updateUser(user.id, data);
+    navigation.popToTop();
+    navigation.navigate("HomeStack", {
+      screen: "Home",
+      updateAccount: true,
+    });
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Formik
         initialValues={{
-          name: value.user.name,
-          mobile: value.user.mobile,
-          email: value.user.email,
-          address: value.user.address,
+          name: user.name,
+          mobile: user.mobile,
+          email: user.email,
+          address: user.address,
           password: "",
           confirmedPassword: "",
         }}
@@ -41,15 +51,15 @@ const AccountSetting = ({ navigation }) => {
             delete values.confirmedPassword;
             navigation.navigate("ConfirmPassword", {
               title: "Proses Perubahan",
-              action: value.updateUser,
+              action: toConfirm,
               data: values,
             });
           } else {
             delete values.confirmedPassword;
             navigation.navigate("ConfirmPassword", {
               title: "Proses Perubahan",
-              action: value.updateUser,
-              data: { ...values, password: value.user.password },
+              action: toConfirm,
+              data: { ...values, password: user.password },
             });
           }
         }}
