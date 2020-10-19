@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   menubarIcon: {
     color: globalStyle.white,
     position: "absolute",
-    left: 24,
+    left: 20,
   },
   searchIcon: {
     color: globalStyle.white,

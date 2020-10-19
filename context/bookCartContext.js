@@ -52,6 +52,9 @@ const bookCartReducer = (state, action) => {
         }
       });
 
+    case "RESET":
+      return (state = []);
+
     default:
       return state;
   }
@@ -74,10 +77,20 @@ export const BookCartProvider = ({ children }) => {
   const decreaseQty = (id) => {
     dispatch({ type: "DEC_QTY", payload: id });
   };
+  const reset = () => {
+    dispatch({ type: "RESET" });
+  };
 
   return (
     <BookCartContext.Provider
-      value={{ bookCart: state, addBook, deleteBook, increaseQty, decreaseQty }}
+      value={{
+        bookCart: state,
+        addBook,
+        deleteBook,
+        increaseQty,
+        decreaseQty,
+        reset,
+      }}
     >
       {children}
     </BookCartContext.Provider>

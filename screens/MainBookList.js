@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { StyleSheet, View, Text, FlatList, Dimensions } from "react-native";
 import BookContext from "../context/bookContext";
 
@@ -7,13 +7,20 @@ import BookCard from "../components/BookCard";
 const MainBookList = ({ navigation }) => {
   const value = useContext(BookContext);
 
+  useEffect(() => {
+    if (value.books.length > 3 && value.books.length % 2 !== 0) {
+    }
+  }, [value.books]);
+
   return (
     <View style={styes.container}>
       <FlatList
-        style={{
-          width: Dimensions.get("window").width - 40,
+        contentContainerStyle={{
+          flexGrow: 1,
         }}
-        columnWrapperStyle={{ flex: 1, justifyContent: "space-between" }}
+        style={{
+          width: "100%",
+        }}
         numColumns={3}
         showsVerticalScrollIndicator={false}
         data={value.books}
@@ -32,14 +39,18 @@ const MainBookList = ({ navigation }) => {
 
 const styes = StyleSheet.create({
   container: {
+    justifyContent: "center",
     alignItems: "center",
     paddingTop: 24,
+    paddingHorizontal: 20,
     backgroundColor: "white",
     flex: 1,
   },
   cardContainer: {
     marginBottom: 18,
-    flexDirection: "column",
+    flex: 1 / 3,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
