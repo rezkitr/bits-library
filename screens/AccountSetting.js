@@ -56,10 +56,11 @@ const AccountSetting = ({ navigation }) => {
             });
           } else {
             delete values.confirmedPassword;
+            delete values.password;
             navigation.navigate("ConfirmPassword", {
               title: "Proses Perubahan",
               action: toConfirm,
-              data: { ...values, password: user.password },
+              data: values,
             });
           }
         }}

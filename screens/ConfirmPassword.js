@@ -41,8 +41,15 @@ const ConfirmPassword = ({ navigation, route }) => {
             onSubmit={async (values) => {
               setLoading(true);
               try {
+                let password = route.params.data.password
+                  ? route.params.data.password
+                  : values.password;
+
                 if (await value.onConfirm(value.user.email, values.password)) {
-                  await route.params.action(route.params.data);
+                  await route.params.action({
+                    ...route.params.data,
+                    password: password,
+                  });
                   setFalsePassword(false);
                 } else {
                   setLoading(false);
