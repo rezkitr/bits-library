@@ -1,12 +1,17 @@
-import React, { useEffect } from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import React, { useEffect, useContext } from "react";
+import { StyleSheet, View, ScrollView, ActivityIndicator } from "react-native";
+import { globalStyle } from "../styles/globalStyle";
 
 import Carousel from "../components/Carousel";
 import SectionHeader from "../components/SectionHeader";
 import BookListHome from "../components/BookListHome";
 import Alert from "../components/Alert";
 
-const Home = ({ navigation, route, rootProps }) => {
+import BookContext from "../context/bookContext";
+
+const Home = ({ navigation, rootProps }) => {
+  const { books } = useContext(BookContext);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
       if (rootProps.route.params) {
@@ -34,9 +39,16 @@ const Home = ({ navigation, route, rootProps }) => {
             navTo="MainBookList"
           />
         </View>
-        <View style={styles.bookListContainer}>
-          <BookListHome navigation={navigation} type="popular" />
-        </View>
+        {books.length ? (
+          <View style={styles.bookListContainer}>
+            <BookListHome navigation={navigation} type="popular" />
+          </View>
+        ) : (
+          <View style={{ flex: 1 }}>
+            <ActivityIndicator color={globalStyle.darkGrey} />
+          </View>
+        )}
+
         <View style={styles.headerContainer}>
           <SectionHeader
             title="Terbaru"
@@ -45,9 +57,15 @@ const Home = ({ navigation, route, rootProps }) => {
             navTo="MainBookList"
           />
         </View>
-        <View style={styles.bookListContainer}>
-          <BookListHome navigation={navigation} type="latest" />
-        </View>
+        {books.length ? (
+          <View style={styles.bookListContainer}>
+            <BookListHome navigation={navigation} type="latest" />
+          </View>
+        ) : (
+          <View style={{ flex: 1 }}>
+            <ActivityIndicator color={globalStyle.darkGrey} />
+          </View>
+        )}
       </ScrollView>
     </>
   );
