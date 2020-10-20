@@ -1,9 +1,9 @@
-export const nameShortener = (name) => {
+export const nameShortener = (name, limit) => {
   let shortenName = "";
   const nameLength = name.length;
 
-  if (nameLength > 15) {
-    shortenName = name.substring(0, 12) + "...";
+  if (nameLength >= limit) {
+    shortenName = name.substring(0, limit - 3) + "...";
   } else {
     shortenName = name;
   }

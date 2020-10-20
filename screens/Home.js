@@ -28,7 +28,7 @@ const Home = ({ navigation, rootProps }) => {
       ) : null}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{ backgroundColor: "white" }}
+        style={{ backgroundColor: "white", flex: 1 }}
       >
         <Carousel />
         <View style={styles.headerContainer}>

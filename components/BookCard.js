@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { globalStyle } from "../styles/globalStyle";
 import { nameShortener } from "../helperFunction/nameShortener";
-import { titleShortener } from "../helperFunction/titleShortener";
 import { priceFormatter } from "../helperFunction/priceFormatter";
 
 const BookCard = ({
@@ -38,10 +37,10 @@ const BookCard = ({
           />
           <View style={styles.infoContainer}>
             <Text style={{ ...styles.title, ...titleStyle }}>
-              {titleShortener(item.name)}
+              {completeInfo ? item.name : nameShortener(item.name, 30)}
             </Text>
             <Text style={{ ...styles.author, ...authorStyle }}>
-              {completeInfo ? item.author : nameShortener(item.author)}
+              {completeInfo ? item.author : nameShortener(item.author, 15)}
             </Text>
           </View>
           <Text style={{ ...styles.price, ...priceStyle }}>

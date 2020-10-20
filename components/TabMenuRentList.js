@@ -1,22 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
+  FlatList,
   ScrollView,
   Dimensions,
 } from "react-native";
 import { globalStyle } from "../styles/globalStyle";
+import RentContext from "../context/rentContext";
+import { dateFormatter } from "../helperFunction/dateFormatter";
+import { nameShortener } from "../helperFunction/nameShortener";
 
 const OnRent = () => {
+  const { listOnRent } = useContext(RentContext);
+
   return (
     <View style={styles.contentContainer}>
-      <Text>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ut vero hic
-        harum recusandae error minus, iste quisquam velit dolorum odit
-        laboriosam id sunt voluptatibus iure, aliquam ex assumenda. Neque, iste!
-      </Text>
+      <View>
+        <FlatList
+          data={listOnRent}
+          keyExtractor={(item) => item.rentData.id.toString()}
+          renderItem={({ item }) => {
+            let bookNames = "";
+            item.books.map(
+              (book) => (bookNames = bookNames + book.name + ", ")
+            );
+            return (
+              <View
+                style={{
+                  paddingVertical: 14,
+                  borderBottomWidth: 0.3,
+                  borderBottomColor: globalStyle.lighGrey,
+                }}
+              >
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 16, marginBottom: 6 }}
+                >
+                  {nameShortener(bookNames, 42)}
+                </Text>
+                <Text style={{ color: globalStyle.darkGrey }}>
+                  {dateFormatter(item.rentData.start_date, false)} -{" "}
+                  {dateFormatter(item.rentData.end_date, false)}
+                </Text>
+              </View>
+            );
+          }}
+        />
+      </View>
     </View>
   );
 };

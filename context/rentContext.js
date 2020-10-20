@@ -1,24 +1,26 @@
-import React, { useReducer, useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-community/async-storage";
 import { bitsLibApi } from "../api/bitsLibApi";
 
 import BookCartContext from "./bookCartContext";
+import BookContext from "./bookContext";
 import UserContext from "./userContext";
 
 const RentContext = React.createContext();
 
-const rentReducer = (state, action) => {
-  switch (action.type) {
-    default:
-      return state;
-  }
-};
-
 export const RentProvider = ({ children }) => {
   const { bookCart } = useContext(BookCartContext);
+  const { books } = useContext(BookContext);
   const { user } = useContext(UserContext);
 
-  const [state, dispatch] = useReducer(rentReducer, {});
+  const [listOnRent, setListOnRent] = useState([]);
+  const [listReturned, setListReturned] = useState([]);
+
+  useEffect(() => {
+    if (user && books) {
+      getRentList();
+    }
+  }, [user, books]);
 
   const getItemBorrowed = () => {
     let borrowed = [];
@@ -63,8 +65,54 @@ export const RentProvider = ({ children }) => {
     }
   };
 
+  const getRentList = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const rentData = await bitsLibApi.get(`/borrow/index/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      let data = [];
+      let onrent = [];
+      let returned = [];
+      let bookList = [];
+      for (const item of rentData.data.data) {
+        const bookData = await bitsLibApi.get(`/borrow/view/${item.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        for (const item of bookData.data.data.borrowd) {
+          const index = books.findIndex((book) => book.id == item.book_id);
+          bookList.push({
+            name: books[index].name,
+            author: books[index].author,
+            ...item,
+          });
+        }
+
+        data.push({ rentData: item, books: bookList });
+      }
+
+      for (const item of data) {
+        if (item.rentData.status === "N") {
+          onrent.push(item);
+        } else {
+          returned.push(item);
+        }
+      }
+      setListOnRent(onrent);
+      setListReturned(returned);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <RentContext.Provider value={{ data: state, createRent }}>
+    <RentContext.Provider value={{ listOnRent, listReturned, createRent }}>
       {children}
     </RentContext.Provider>
   );

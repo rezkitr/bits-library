@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { View } from "react-native";
 
 import BookCard from "../components/BookCard";
 import InfoStockFooter from "../components/InfoStockFooter";
@@ -9,7 +9,7 @@ const BookDetail = ({ route, navigation }) => {
   return (
     <View style={{ paddingTop: 24, flex: 1 }}>
       <BookCard
-        completeAuthor
+        completeInfo
         touchable={false}
         item={route.params.itemData}
         navigation={navigation}
