@@ -13,6 +13,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import CheckBox from "@react-native-community/checkbox";
 import { dateFormatter } from "../helperFunction/dateFormatter";
 import { priceFormatter } from "../helperFunction/priceFormatter";
+import { dateDifference } from "../helperFunction/dateDifference";
 import BookCartContext from "../context/bookCartContext";
 import RentContext from "../context/rentContext";
 
@@ -47,16 +48,6 @@ const RentForm = ({ navigation, route }) => {
   const onDateChange = (event, selectedDate) => {
     let endDate = new Date(selectedDate).toISOString().split("T")[0];
     setEndDate(endDate);
-  };
-
-  const getRentDuration = () => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    const timeDiff = end.getTime() - start.getTime();
-    const dayDiff = timeDiff / (1000 * 3600 * 24);
-
-    return dayDiff;
   };
 
   const getTotal = () => {
@@ -229,7 +220,10 @@ const RentForm = ({ navigation, route }) => {
                 <View style={{ marginTop: 10 }}>
                   <Text style={{ fontWeight: "bold" }}>Total Bayar</Text>
                   <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                    {`${bookCart.length} Buku, ${getRentDuration()} Hari`}
+                    {`${bookCart.length} Buku, ${dateDifference(
+                      startDate,
+                      endDate
+                    )} Hari`}
                   </Text>
                   <Text style={{ position: "absolute", right: 0 }}>
                     Rp {priceFormatter(total)}

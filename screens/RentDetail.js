@@ -9,31 +9,52 @@ import {
 } from "react-native";
 import { Feather, Entypo } from "@expo/vector-icons";
 import { globalStyle } from "../styles/globalStyle";
+import { dateFormatter } from "../helperFunction/dateFormatter";
+import { priceFormatter } from "../helperFunction/priceFormatter";
+import { dateDifference } from "../helperFunction/dateDifference";
 
 import { books } from "../components/_dataDummy";
 
 import Button from "../components/CustomButton";
 const book = books[0];
 
-const BookItem = () => {
+const BookItem = ({ data }) => {
   return (
-    <View style={{ flexDirection: "row" }}>
+    <View style={{ flexDirection: "row", marginBottom: 12 }}>
       <Image
         style={styles.coverImg}
-        source={{ uri: book.coverImg }}
+        source={{
+          uri:
+            "https://i.pinimg.com/564x/17/fe/4d/17fe4dcf3546a5804efa04b3f7879dc4.jpg",
+        }}
         resizeMode="stretch"
       />
       <View style={{ paddingLeft: 10, paddingTop: 4, flex: 1 }}>
-        <Text style={styles.title}>{book.title}</Text>
-        <Text style={styles.author}>Oleh: {book.author}</Text>
-        <Text style={styles.price}>Rp {book.price}, 1 pcs</Text>
+        <Text style={styles.title}>{data.name}</Text>
+        <Text style={styles.author}>Oleh: {data.author}</Text>
+        <Text style={styles.price}>
+          Rp {priceFormatter(data.subtotal)}, {data.qty} pcs
+        </Text>
       </View>
     </View>
   );
 };
 
-const RentDetail = () => {
+const RentDetail = ({ route }) => {
+  const { rentData, books, late } = route.params.data;
   const [showDetail, setShowDetail] = useState(false);
+
+  const getLateDuration = (data) => {
+    let duration;
+    if (data.status === "N") {
+      let today = new Date();
+      duration = dateDifference(data.end_date, today);
+    } else {
+      duration = dateDifference(data.end_date, data.updated_at);
+    }
+
+    return duration;
+  };
 
   return (
     <View style={styles.container}>
@@ -42,7 +63,9 @@ const RentDetail = () => {
         <View style={{ flex: 1 }}>
           <View style={styles.dateContainer}>
             <View>
-              <Text style={styles.date}>20 September 2020</Text>
+              <Text style={styles.date}>
+                {dateFormatter(rentData.start_date)}
+              </Text>
               <Text style={styles.info}>Tanggal Pinjam</Text>
             </View>
             <Feather
@@ -51,106 +74,136 @@ const RentDetail = () => {
               color={globalStyle.softGrey}
             />
             <View>
-              <Text style={styles.date}>23 September 2020</Text>
+              <Text style={styles.date}>
+                {dateFormatter(rentData.end_date)}
+              </Text>
               <Text style={styles.info}>Tanggal Kembali</Text>
             </View>
           </View>
 
           {/* item */}
           <View style={styles.itemContainer}>
-            <BookItem />
+            {books.map((item) => {
+              return <BookItem key={item.book_id} data={item} />;
+            })}
           </View>
 
           {/* pay */}
           <View style={styles.payContainer}>
             <Text style={{ fontWeight: "bold" }}>Biaya yang sudah dibayar</Text>
             <Text style={{ fontWeight: "bold", color: globalStyle.darkGrey }}>
-              Rp 30000
+              Rp {priceFormatter(rentData.total)}
             </Text>
           </View>
 
           {/* charge */}
-          <View style={styles.payContainer}>
-            <View>
-              <Text style={{ fontWeight: "bold", color: "red" }}>
-                Denda Terlambat
-              </Text>
-              <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                1 Hari
+          {late ? (
+            <View style={styles.payContainer}>
+              <View>
+                <Text style={{ fontWeight: "bold", color: "red" }}>
+                  Denda Terlambat
+                </Text>
+                <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
+                  {getLateDuration(rentData)} Hari
+                </Text>
+              </View>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  color: "red",
+                  alignSelf: "flex-start",
+                }}
+              >
+                Rp {priceFormatter(5000)}
               </Text>
             </View>
-            <Text
-              style={{
-                fontWeight: "bold",
-                color: "red",
-                alignSelf: "flex-start",
-              }}
-            >
-              Rp 5000
-            </Text>
-          </View>
+          ) : null}
 
           {/* detail payment (if charge) */}
-          <View>
-            <TouchableOpacity onPress={() => setShowDetail(!showDetail)}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text
-                  style={{
-                    marginRight: 4,
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    color: globalStyle.mustard,
-                  }}
-                >
-                  Detail Pembayaran
-                </Text>
-                <Entypo
-                  name="chevron-right"
-                  size={20}
-                  color={globalStyle.mustard}
-                  style={{
-                    transform: showDetail
-                      ? [{ rotate: "90deg" }]
-                      : [{ rotate: "0deg" }],
-                  }}
-                />
-              </View>
-            </TouchableOpacity>
-            {showDetail ? (
-              <View style={{ marginTop: 8 }}>
-                <View>
-                  <Text style={{ fontSize: 12 }}>{book.title}</Text>
-                  <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                    1 Pcs, 3 Hari
-                  </Text>
+          {late && rentData.status == "F" ? (
+            <View>
+              <TouchableOpacity onPress={() => setShowDetail(!showDetail)}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text
-                    style={{ position: "absolute", right: 0, fontSize: 12 }}
+                    style={{
+                      marginRight: 4,
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      color: globalStyle.mustard,
+                    }}
                   >
-                    Rp {book.price}
+                    Detail Pembayaran
                   </Text>
+                  <Entypo
+                    name="chevron-right"
+                    size={20}
+                    color={globalStyle.mustard}
+                    style={{
+                      transform: showDetail
+                        ? [{ rotate: "90deg" }]
+                        : [{ rotate: "0deg" }],
+                    }}
+                  />
                 </View>
+              </TouchableOpacity>
+              {showDetail ? (
+                <View style={{ marginTop: 8 }}>
+                  {books.map((item) => {
+                    return (
+                      <View style={{ marginBottom: 5 }} key={item.book_id}>
+                        <Text style={{ fontSize: 12 }}>{item.name}</Text>
+                        <Text
+                          style={{ fontSize: 12, color: globalStyle.darkGrey }}
+                        >
+                          {item.qty} Pcs,{" "}
+                          {dateDifference(
+                            rentData.start_date,
+                            rentData.end_date
+                          )}{" "}
+                          Hari
+                        </Text>
+                        <Text
+                          style={{
+                            position: "absolute",
+                            right: 0,
+                            fontSize: 12,
+                          }}
+                        >
+                          Rp {priceFormatter(item.subtotal)}
+                        </Text>
+                      </View>
+                    );
+                  })}
 
-                <View>
-                  <Text style={{ fontSize: 12 }}>Denda Terlambat</Text>
-                  <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                    1 Pcs, 3 Hari
-                  </Text>
-                  <Text
-                    style={{ position: "absolute", right: 0, fontSize: 12 }}
-                  >
-                    Rp {book.price}
-                  </Text>
+                  <View>
+                    <Text style={{ fontSize: 12 }}>Denda Terlambat</Text>
+                    <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
+                      {getLateDuration(rentData)} Hari
+                    </Text>
+                    <Text
+                      style={{ position: "absolute", right: 0, fontSize: 12 }}
+                    >
+                      Rp {book.price}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            ) : null}
-          </View>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       </ScrollView>
 
-      <Button
-        title="Kembalikan Buku"
-        style={{ backgroundColor: globalStyle.mustard }}
-      />
+      {rentData.status === "N" ? (
+        <Button
+          title="Kembalikan Buku"
+          style={{ backgroundColor: globalStyle.mustard }}
+        />
+      ) : (
+        <Button
+          title="Sudah Dikembalikan"
+          style={{ backgroundColor: globalStyle.mustard }}
+        />
+      )}
     </View>
   );
 };
@@ -178,7 +231,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     marginTop: 16,
     marginBottom: 18,
-    paddingBottom: 16,
+    paddingBottom: 10,
     borderBottomWidth: 0.5,
     borderBottomColor: globalStyle.softGrey,
   },
