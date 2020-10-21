@@ -57,7 +57,11 @@ const SuccessMessage = ({ navigation, route }) => {
           }}
           onPress={() => {
             navigation.popToTop();
-            navigation.navigate(navTo);
+            if (navTo !== "RentDetail") {
+              navigation.navigate(navTo);
+            } else {
+              navigation.navigate(navTo);
+            }
           }}
         />
       </View>

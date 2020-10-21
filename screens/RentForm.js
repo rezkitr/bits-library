@@ -61,13 +61,13 @@ const RentForm = ({ navigation, route }) => {
 
   const toConfirm = async (data) => {
     try {
-      const { status, message } = await createRent(data);
+      const { status, message, borrow } = await createRent(data);
 
       if (status) {
-        navigation.replace("SuccessMessage", {
+        navigation.navigate("SuccessMessage", {
           text: "Buku berhasil dipinjam",
           buttonText: "Lihat Detail Pinjaman",
-          navTo: "HomeStack",
+          navTo: "RentDetail",
         });
         reset();
       } else {
