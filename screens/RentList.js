@@ -1,9 +1,20 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { StyleSheet, View } from "react-native";
+import RentContext from "../context/rentContext";
 
 import TabMenuRentList from "../components/TabMenuRentList";
 
-const RentList = () => {
+const RentList = ({ navigation }) => {
+  const { getRentList } = useContext(RentContext);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      getRentList();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <TabMenuRentList />

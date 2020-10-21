@@ -16,12 +16,6 @@ export const RentProvider = ({ children }) => {
   const [listOnRent, setListOnRent] = useState([]);
   const [listReturned, setListReturned] = useState([]);
 
-  useEffect(() => {
-    if (user && books) {
-      getRentList();
-    }
-  }, [user, books]);
-
   const getItemBorrowed = () => {
     let borrowed = [];
 
@@ -78,7 +72,9 @@ export const RentProvider = ({ children }) => {
       let onrent = [];
       let returned = [];
       let bookList = [];
-      for (const item of rentData.data.data) {
+      for (const [i, item] of rentData.data.data.entries()) {
+        data.push({ rentData: item });
+
         const bookData = await bitsLibApi.get(`/borrow/view/${item.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -86,15 +82,18 @@ export const RentProvider = ({ children }) => {
         });
 
         for (const item of bookData.data.data.borrowd) {
-          const index = books.findIndex((book) => book.id == item.book_id);
+          // console.log(item);
+          const bookIndex = books.findIndex((book) => book.id == item.book_id);
+
           bookList.push({
-            name: books[index].name,
-            author: books[index].author,
+            name: books[bookIndex].name,
+            author: books[bookIndex].author,
             ...item,
           });
-        }
 
-        data.push({ rentData: item, books: bookList });
+          data[i] = { ...data[i], books: bookList };
+        }
+        bookList = [];
       }
 
       for (const item of data) {
@@ -106,13 +105,17 @@ export const RentProvider = ({ children }) => {
       }
       setListOnRent(onrent);
       setListReturned(returned);
+
+      // console.log(listOnRent);
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <RentContext.Provider value={{ listOnRent, listReturned, createRent }}>
+    <RentContext.Provider
+      value={{ listOnRent, listReturned, createRent, getRentList }}
+    >
       {children}
     </RentContext.Provider>
   );

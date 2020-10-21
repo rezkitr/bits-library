@@ -20,31 +20,40 @@ const OnRent = () => {
     <View style={styles.contentContainer}>
       <View>
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={listOnRent}
           keyExtractor={(item) => item.rentData.id.toString()}
           renderItem={({ item }) => {
             let bookNames = "";
-            item.books.map(
-              (book) => (bookNames = bookNames + book.name + ", ")
-            );
+            item.books.map((book, index) => {
+              index == item.books.length - 1
+                ? (bookNames = bookNames + book.name)
+                : (bookNames = bookNames + book.name + ", ");
+            });
             return (
-              <View
-                style={{
-                  paddingVertical: 14,
-                  borderBottomWidth: 0.3,
-                  borderBottomColor: globalStyle.lighGrey,
-                }}
-              >
-                <Text
-                  style={{ fontWeight: "bold", fontSize: 16, marginBottom: 6 }}
+              <TouchableOpacity>
+                <View
+                  style={{
+                    paddingVertical: 14,
+                    borderBottomWidth: 0.3,
+                    borderBottomColor: globalStyle.lighGrey,
+                  }}
                 >
-                  {nameShortener(bookNames, 42)}
-                </Text>
-                <Text style={{ color: globalStyle.darkGrey }}>
-                  {dateFormatter(item.rentData.start_date, false)} -{" "}
-                  {dateFormatter(item.rentData.end_date, false)}
-                </Text>
-              </View>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 6,
+                    }}
+                  >
+                    {nameShortener(bookNames, 42)}
+                  </Text>
+                  <Text style={{ color: globalStyle.darkGrey }}>
+                    {dateFormatter(item.rentData.start_date, false)} -{" "}
+                    {dateFormatter(item.rentData.end_date, false)}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             );
           }}
         />

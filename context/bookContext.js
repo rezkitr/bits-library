@@ -6,20 +6,14 @@ const BookContext = React.createContext();
 
 export const BookProvider = ({ children }) => {
   const [books, setBooks] = useState([]);
-  const [token, setToken] = useState("");
 
   useEffect(() => {
     getBookList();
-  }, [token]);
-
-  const getToken = async () => {
-    const token = await AsyncStorage.getItem("token");
-    setToken(token);
-  };
+  }, []);
 
   const getBookList = async () => {
     try {
-      await getToken();
+      const token = await AsyncStorage.getItem("token");
       const response = await bitsLibApi.get("/book/index", {
         headers: {
           Authorization: `Bearer ${token}`,
