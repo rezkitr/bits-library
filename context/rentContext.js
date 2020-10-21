@@ -112,9 +112,23 @@ export const RentProvider = ({ children }) => {
     }
   };
 
+  const returnBook = async (rentId) => {
+    const token = await AsyncStorage.getItem("token");
+    const response = await bitsLibApi.post(
+      `/return/${rentId.id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  };
+
   return (
     <RentContext.Provider
-      value={{ listOnRent, listReturned, createRent, getRentList }}
+      value={{ listOnRent, listReturned, createRent, getRentList, returnBook }}
     >
       {children}
     </RentContext.Provider>

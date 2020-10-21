@@ -6,7 +6,9 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 import Button from "../components/CustomButton";
 
-const SuccessMessage = ({ navigation }) => {
+const SuccessMessage = ({ navigation, route }) => {
+  const { text, buttonText, navTo } = route.params;
+
   useFocusEffect(() => {
     BackHandler.addEventListener("hardwareBackPress", function () {
       return true;
@@ -42,18 +44,21 @@ const SuccessMessage = ({ navigation }) => {
           Yeay!
         </Text>
         <Text style={{ color: globalStyle.white, fontSize: 20, marginTop: 10 }}>
-          Buku berhasil dipinjam
+          {text}
         </Text>
       </View>
 
       <View style={{ width: "100%" }}>
         <Button
-          title="Lihat Detail Pinjaman"
+          title={buttonText}
           style={{
             backgroundColor: globalStyle.mustard,
             paddingVertical: 12,
           }}
-          onPress={() => navigation.navigate("RentDetail")}
+          onPress={() => {
+            navigation.popToTop();
+            navigation.navigate(navTo);
+          }}
         />
       </View>
     </View>

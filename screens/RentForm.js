@@ -64,7 +64,11 @@ const RentForm = ({ navigation, route }) => {
       const { status, message } = await createRent(data);
 
       if (status) {
-        navigation.replace("SuccessMessage");
+        navigation.replace("SuccessMessage", {
+          text: "Buku berhasil dipinjam",
+          buttonText: "Lihat Detail Pinjaman",
+          navTo: "HomeStack",
+        });
         reset();
       } else {
         navigation.navigate("RentForm", { flag: true, message });

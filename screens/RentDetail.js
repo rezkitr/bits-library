@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -6,17 +6,16 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  LogBox,
 } from "react-native";
 import { Feather, Entypo } from "@expo/vector-icons";
 import { globalStyle } from "../styles/globalStyle";
 import { dateFormatter } from "../helperFunction/dateFormatter";
 import { priceFormatter } from "../helperFunction/priceFormatter";
 import { dateDifference } from "../helperFunction/dateDifference";
-
-import { books } from "../components/_dataDummy";
+import RentContext from "../context/rentContext";
 
 import Button from "../components/CustomButton";
-const book = books[0];
 
 const BookItem = ({ data }) => {
   return (
@@ -40,20 +39,43 @@ const BookItem = ({ data }) => {
   );
 };
 
-const RentDetail = ({ route }) => {
+const RentDetail = ({ navigation, route }) => {
+  LogBox.ignoreLogs([
+    "Non-serializable values were found in the navigation state",
+  ]);
+
+  const { returnBook } = useContext(RentContext);
   const { rentData, books, late } = route.params.data;
   const [showDetail, setShowDetail] = useState(false);
 
-  const getLateDuration = (data) => {
+  const getLateDuration = () => {
     let duration;
-    if (data.status === "N") {
+    if (rentData.status === "N") {
       let today = new Date();
-      duration = dateDifference(data.end_date, today);
+      duration = dateDifference(rentData.end_date, today);
     } else {
-      duration = dateDifference(data.end_date, data.updated_at);
+      duration = dateDifference(rentData.end_date, rentData.updated_at);
     }
 
     return duration;
+  };
+
+  const onReturn = async (rentId) => {
+    try {
+      const { message, status } = await returnBook(rentId);
+      console.log(status);
+      if (status) {
+        navigation.navigate("SuccessMessage", {
+          text: "Buku berhasil dikembalikan",
+          buttonText: "Kembali ke Beranda",
+          navTo: "HomeStack",
+        });
+      } else {
+        navigation.navigate("RentList", { flag: true, message });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -104,7 +126,7 @@ const RentDetail = ({ route }) => {
                   Denda Terlambat
                 </Text>
                 <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                  {getLateDuration(rentData)} Hari
+                  {getLateDuration()} Hari
                 </Text>
               </View>
               <Text
@@ -178,7 +200,7 @@ const RentDetail = ({ route }) => {
                   <View>
                     <Text style={{ fontSize: 12 }}>Denda Terlambat</Text>
                     <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                      {getLateDuration(rentData)} Hari
+                      {getLateDuration()} Hari
                     </Text>
                     <Text
                       style={{ position: "absolute", right: 0, fontSize: 12 }}
@@ -197,11 +219,18 @@ const RentDetail = ({ route }) => {
         <Button
           title="Kembalikan Buku"
           style={{ backgroundColor: globalStyle.mustard }}
+          onPress={() =>
+            navigation.navigate("ConfirmPassword", {
+              title: "Proses Pengembalian",
+              action: onReturn,
+              data: { id: rentData.id },
+            })
+          }
         />
       ) : (
         <Button
           title="Sudah Dikembalikan"
-          style={{ backgroundColor: globalStyle.mustard }}
+          style={{ backgroundColor: globalStyle.lighGrey }}
         />
       )}
     </View>
