@@ -17,6 +17,8 @@ const SuccessMessage = ({ navigation, route }) => {
   const { text, buttonText, navTo, id } = route.params;
   const { getRentDetail } = useContext(RentContext);
 
+  const [loading, setLoading] = useState(false);
+
   useFocusEffect(() => {
     BackHandler.addEventListener("hardwareBackPress", function () {
       return true;
@@ -28,10 +30,15 @@ const SuccessMessage = ({ navigation, route }) => {
   }, []);
 
   const toRentDetail = async () => {
-    const data = await getRentDetail(id);
-    navigation.navigate(navTo, {
-      data: { ...data, late: false },
-    });
+    try {
+      const data = await getRentDetail(id);
+
+      navigation.navigate(navTo, {
+        data: { ...data, late: false },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
