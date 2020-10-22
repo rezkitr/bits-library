@@ -1,6 +1,6 @@
 import React from "react";
 import { FlatListSlider } from "react-native-flatlist-slider";
-import { carouselImg } from "./_dataDummy";
+import { carouselImg } from "./_imgCarousel";
 
 const Carousel = () => {
   return (
