@@ -20,7 +20,8 @@ export const RentProvider = ({ children }) => {
     if (books.length > 0) {
       getRentList();
     }
-  }, [books]);
+    console.log("Helo");
+  }, [user]);
 
   const getItemBorrowed = () => {
     let borrowed = [];
