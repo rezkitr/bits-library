@@ -63,7 +63,7 @@ const RentDetail = ({ navigation, route }) => {
   const onReturn = async (rentId) => {
     try {
       const { message, status } = await returnBook(rentId);
-      console.log(status);
+
       if (status) {
         navigation.navigate("SuccessMessage", {
           text: "Buku berhasil dikembalikan",

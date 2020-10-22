@@ -7,10 +7,6 @@ const BookContext = React.createContext();
 export const BookProvider = ({ children }) => {
   const [books, setBooks] = useState([]);
 
-  useEffect(() => {
-    getBookList();
-  }, []);
-
   const getBookList = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -40,9 +36,9 @@ export const BookProvider = ({ children }) => {
     <BookContext.Provider
       value={{
         books: books,
-        getBookList: getBookList,
-        getPopularBooks: getPopularBooks,
-        getLatestBook: getLatestBook,
+        getBookList,
+        getPopularBooks,
+        getLatestBook,
       }}
     >
       {children}

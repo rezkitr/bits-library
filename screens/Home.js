@@ -8,11 +8,15 @@ import BookListHome from "../components/BookListHome";
 import Alert from "../components/Alert";
 
 import BookContext from "../context/bookContext";
+import RentContext from "../context/rentContext";
 
 const Home = ({ navigation, rootProps }) => {
-  const { books } = useContext(BookContext);
+  const { books, getBookList } = useContext(BookContext);
+  const { getRentList, listOnRent } = useContext(RentContext);
 
   useEffect(() => {
+    getBookList();
+
     const unsubscribe = navigation.addListener("blur", () => {
       if (rootProps.route.params) {
         rootProps.route.params.updateAccount = false;

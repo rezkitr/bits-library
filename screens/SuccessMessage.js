@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { StyleSheet, View, Text, BackHandler } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  BackHandler,
+  ActivityIndicator,
+} from "react-native";
 import { globalStyle } from "../styles/globalStyle";
 import { FontAwesome5 } from "@expo/vector-icons";
+import RentContext from "../context/rentContext";
 
 import Button from "../components/CustomButton";
 
 const SuccessMessage = ({ navigation, route }) => {
-  const { text, buttonText, navTo } = route.params;
+  const { text, buttonText, navTo, id } = route.params;
+  const { getRentDetail } = useContext(RentContext);
 
   useFocusEffect(() => {
     BackHandler.addEventListener("hardwareBackPress", function () {
@@ -18,6 +26,13 @@ const SuccessMessage = ({ navigation, route }) => {
       return true;
     });
   }, []);
+
+  const toRentDetail = async () => {
+    const data = await getRentDetail(id);
+    navigation.navigate(navTo, {
+      data: { ...data, late: false },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -60,7 +75,7 @@ const SuccessMessage = ({ navigation, route }) => {
             if (navTo !== "RentDetail") {
               navigation.navigate(navTo);
             } else {
-              navigation.navigate(navTo);
+              toRentDetail();
             }
           }}
         />

@@ -5,16 +5,6 @@ import RentContext from "../context/rentContext";
 import TabMenuRentList from "../components/TabMenuRentList";
 
 const RentList = ({ navigation }) => {
-  const { getRentList } = useContext(RentContext);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      getRentList();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
-
   return (
     <View style={styles.container}>
       <TabMenuRentList />

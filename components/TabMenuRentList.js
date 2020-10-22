@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -11,9 +11,9 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { globalStyle } from "../styles/globalStyle";
 import { SimpleLineIcons } from "@expo/vector-icons";
-import RentContext from "../context/rentContext";
 import { dateFormatter } from "../helperFunction/dateFormatter";
 import { nameShortener } from "../helperFunction/nameShortener";
+import RentContext from "../context/rentContext";
 
 const checkLate = (data) => {
   let lateStatus;
@@ -31,8 +31,10 @@ const checkLate = (data) => {
 };
 
 const RentItem = ({ data }) => {
+  // console.log(data);
   const navigation = useNavigation();
   let bookNames = "";
+
   data.books.map((book, index) => {
     index == data.books.length - 1
       ? (bookNames = bookNames + book.name)
@@ -140,6 +142,12 @@ const EmptyList = () => {
 
 const TabMenuRentList = () => {
   const [activeTab, setActiveTab] = useState(1);
+
+  const { getRentList } = useContext(RentContext);
+
+  useEffect(() => {
+    getRentList();
+  });
 
   return (
     <>

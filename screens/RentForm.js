@@ -62,12 +62,12 @@ const RentForm = ({ navigation, route }) => {
   const toConfirm = async (data) => {
     try {
       const { status, message, borrow } = await createRent(data);
-
       if (status) {
         navigation.navigate("SuccessMessage", {
           text: "Buku berhasil dipinjam",
           buttonText: "Lihat Detail Pinjaman",
           navTo: "RentDetail",
+          id: borrow.id,
         });
         reset();
       } else {
@@ -93,193 +93,203 @@ const RentForm = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
       {route.params && route.params.flag ? (
         <Alert text={route.params.message} color="#F65C5C" />
       ) : null}
-
-      {!bookCart.length ? (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Feather name="shopping-cart" size={40} color="black" />
-          <Text style={{ marginTop: 12, fontSize: 16 }}>
-            Daftar buku kosong
-          </Text>
-        </View>
-      ) : (
-        <View style={{ flex: 1 }}>
-          <ScrollView
-            style={{ marginBottom: 10 }}
-            showsVerticalScrollIndicator={false}
+      <View style={styles.container}>
+        {!bookCart.length ? (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
-            <View>
-              <Text style={styles.header}>Daftar buku yang akan dipinjam</Text>
+            <Feather name="shopping-cart" size={40} color="black" />
+            <Text style={{ marginTop: 12, fontSize: 16 }}>
+              Daftar buku kosong
+            </Text>
+          </View>
+        ) : (
+          <View style={{ flex: 1 }}>
+            <ScrollView
+              style={{ marginBottom: 10 }}
+              showsVerticalScrollIndicator={false}
+            >
+              <View>
+                <Text style={styles.header}>
+                  Daftar buku yang akan dipinjam
+                </Text>
 
-              {/* item */}
-              <View style={{ marginTop: 15 }}>
-                {bookCart.map((item) => {
-                  return <BookItem key={item.book.id} item={item} />;
-                })}
-              </View>
+                {/* item */}
+                <View style={{ marginTop: 15 }}>
+                  {bookCart.map((item) => {
+                    return <BookItem key={item.book.id} item={item} />;
+                  })}
+                </View>
 
-              {/* add book */}
-              <View style={{ marginTop: 16 }}>
-                <TouchableOpacity
-                  style={{ flexDirection: "row", alignItems: "center" }}
-                  onPress={() => navigation.navigate("MainBookList")}
-                >
-                  <FontAwesome5
-                    name="plus"
-                    size={16}
-                    color={globalStyle.mustard}
-                  />
-                  <Text style={{ color: globalStyle.mustard, marginLeft: 8 }}>
-                    Tambah buku lainnya
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Date */}
-              <View style={{ marginTop: 8 }}>
-                <Text style={styles.header}>Atur Tanggal</Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginTop: 10,
-                  }}
-                >
-                  <View style={{ flexDirection: "row" }}>
-                    <Feather
-                      name="calendar"
-                      size={20}
-                      style={styles.dateIcon}
+                {/* add book */}
+                <View style={{ marginTop: 16 }}>
+                  <TouchableOpacity
+                    style={{ flexDirection: "row", alignItems: "center" }}
+                    onPress={() => navigation.navigate("MainBookList")}
+                  >
+                    <FontAwesome5
+                      name="plus"
+                      size={16}
+                      color={globalStyle.mustard}
                     />
-                    <Text style={styles.date}>
-                      {dateFormatter(startDate, false)}
+                    <Text style={{ color: globalStyle.mustard, marginLeft: 8 }}>
+                      Tambah buku lainnya
                     </Text>
-                  </View>
-                  <Feather
-                    name="minus"
-                    size={24}
-                    color={globalStyle.lighGrey}
-                    style={{ alignSelf: "center" }}
-                  />
-                  <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Date */}
+                <View style={{ marginTop: 8 }}>
+                  <Text style={styles.header}>Atur Tanggal</Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginTop: 10,
+                    }}
+                  >
                     <View style={{ flexDirection: "row" }}>
                       <Feather
                         name="calendar"
                         size={20}
-                        style={{ ...styles.dateIcon, backgroundColor: "white" }}
+                        style={styles.dateIcon}
                       />
-                      <Text
-                        style={{ ...styles.date, backgroundColor: "white" }}
-                      >
-                        {dateFormatter(endDate, false)}
+                      <Text style={styles.date}>
+                        {dateFormatter(startDate, false)}
                       </Text>
-                      {showDatePicker && (
-                        <DateTimePicker
-                          testID="endDate"
-                          value={new Date(endDate)}
-                          mode="date"
-                          minimumDate={new Date().setDate(
-                            new Date().getDate() + 1
-                          )}
-                          onChange={onDateChange}
-                        />
-                      )}
                     </View>
-                  </TouchableOpacity>
+                    <Feather
+                      name="minus"
+                      size={24}
+                      color={globalStyle.lighGrey}
+                      style={{ alignSelf: "center" }}
+                    />
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                      <View style={{ flexDirection: "row" }}>
+                        <Feather
+                          name="calendar"
+                          size={20}
+                          style={{
+                            ...styles.dateIcon,
+                            backgroundColor: "white",
+                          }}
+                        />
+                        <Text
+                          style={{ ...styles.date, backgroundColor: "white" }}
+                        >
+                          {dateFormatter(endDate, false)}
+                        </Text>
+                        {showDatePicker && (
+                          <DateTimePicker
+                            testID="endDate"
+                            value={new Date(endDate)}
+                            mode="date"
+                            minimumDate={new Date().setDate(
+                              new Date().getDate() + 1
+                            )}
+                            onChange={onDateChange}
+                          />
+                        )}
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
 
-              {/* detail biaya */}
-              <View style={{ marginTop: 16 }}>
-                <Text style={styles.header}>Detail Biaya</Text>
+                {/* detail biaya */}
+                <View style={{ marginTop: 16 }}>
+                  <Text style={styles.header}>Detail Biaya</Text>
+                  <View
+                    style={{
+                      marginTop: 10,
+                      borderBottomWidth: 0.3,
+                      paddingBottom: 5,
+                    }}
+                  >
+                    {bookCart.map((item) => {
+                      return (
+                        <View key={item.book.id} style={{ marginBottom: 6 }}>
+                          <Text>{item.book.name}</Text>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              color: globalStyle.darkGrey,
+                            }}
+                          >
+                            {item.qty} pcs
+                          </Text>
+                          <Text style={{ position: "absolute", right: 0 }}>
+                            Rp {priceFormatter(item.book.price * item.qty)}
+                          </Text>
+                        </View>
+                      );
+                    })}
+                  </View>
+
+                  <View style={{ marginTop: 10 }}>
+                    <Text style={{ fontWeight: "bold" }}>Total Bayar</Text>
+                    <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
+                      {`${bookCart.length} Buku, ${dateDifference(
+                        startDate,
+                        endDate
+                      )} Hari`}
+                    </Text>
+                    <Text style={{ position: "absolute", right: 0 }}>
+                      Rp {priceFormatter(total)}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* agreement */}
                 <View
                   style={{
-                    marginTop: 10,
-                    borderBottomWidth: 0.3,
-                    paddingBottom: 5,
+                    marginTop: 20,
+                    flexDirection: "row",
+                    alignItems: "center",
                   }}
                 >
-                  {bookCart.map((item) => {
-                    return (
-                      <View key={item.book.id} style={{ marginBottom: 6 }}>
-                        <Text>{item.book.name}</Text>
-                        <Text
-                          style={{ fontSize: 12, color: globalStyle.darkGrey }}
-                        >
-                          {item.qty} pcs
-                        </Text>
-                        <Text style={{ position: "absolute", right: 0 }}>
-                          Rp {priceFormatter(item.book.price * item.qty)}
-                        </Text>
-                      </View>
-                    );
-                  })}
-                </View>
-
-                <View style={{ marginTop: 10 }}>
-                  <Text style={{ fontWeight: "bold" }}>Total Bayar</Text>
-                  <Text style={{ fontSize: 12, color: globalStyle.darkGrey }}>
-                    {`${bookCart.length} Buku, ${dateDifference(
-                      startDate,
-                      endDate
-                    )} Hari`}
-                  </Text>
-                  <Text style={{ position: "absolute", right: 0 }}>
-                    Rp {priceFormatter(total)}
+                  <CheckBox
+                    disabled={false}
+                    value={agreed}
+                    onValueChange={(newValue) => setAgreed(newValue)}
+                  />
+                  <Text
+                    style={{
+                      textAlign: "justify",
+                      fontSize: 11,
+                      color: globalStyle.darkGrey,
+                      flex: 1,
+                      paddingLeft: 10,
+                    }}
+                  >
+                    Dengan ini saya menyetujui untuk melakukan pengembalian
+                    sesuai tanggal yang telah ditentukan. Apabila melewati
+                    tanggal tersebut, saya bersedia membayar denda yang telah
+                    ditentukan.
                   </Text>
                 </View>
               </View>
+            </ScrollView>
 
-              {/* agreement */}
-              <View
+            {/* button */}
+            <View>
+              <Button
+                title="Lanjutkan Peminjaman"
                 style={{
-                  marginTop: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
+                  backgroundColor: agreed
+                    ? globalStyle.mustard
+                    : globalStyle.softGrey,
                 }}
-              >
-                <CheckBox
-                  disabled={false}
-                  value={agreed}
-                  onValueChange={(newValue) => setAgreed(newValue)}
-                />
-                <Text
-                  style={{
-                    textAlign: "justify",
-                    fontSize: 11,
-                    color: globalStyle.darkGrey,
-                    flex: 1,
-                    paddingLeft: 10,
-                  }}
-                >
-                  Dengan ini saya menyetujui untuk melakukan pengembalian sesuai
-                  tanggal yang telah ditentukan. Apabila melewati tanggal
-                  tersebut, saya bersedia membayar denda yang telah ditentukan.
-                </Text>
-              </View>
+                textStyle={{ color: agreed ? "white" : globalStyle.darkGrey }}
+                onPress={onSubmit}
+              />
             </View>
-          </ScrollView>
-
-          {/* button */}
-          <View>
-            <Button
-              title="Lanjutkan Peminjaman"
-              style={{
-                backgroundColor: agreed
-                  ? globalStyle.mustard
-                  : globalStyle.softGrey,
-              }}
-              textStyle={{ color: agreed ? "white" : globalStyle.darkGrey }}
-              onPress={onSubmit}
-            />
           </View>
-        </View>
-      )}
+        )}
+      </View>
     </View>
   );
 };
@@ -288,7 +298,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-
     backgroundColor: "white",
     justifyContent: "space-between",
     paddingBottom: "5%",
